@@ -1,14 +1,15 @@
 <?php
 namespace App\Models;
+use PDO;
 class User {
     private $pdo;
-    public function __construct($pdo){
+    public function __construct(PDO $pdo){
         $this->pdo = $pdo;
     }
-    public function create($uname,$upassw){
+    public function create(string $uname,string $upassw): bool{
         $name = trim($uname);
-        $pass = password_hash($upassw);
-        $stmt = $this->pdo->prepare('INSERT INTO users (username,password_hash,created_at) VALUES :username, :password_hash, created_at');
+        $pass = password_hash($upassw,PASSWORD_DEFAULT);
+        $stmt = $this->pdo->prepare('INSERT INTO users (username,password_hash,created_at) VALUES (:username, :password_hash, :created_at)');
         $stmt->execute(['username' => $name, 'password_hash' => $pass, 'created_at' => time()]);
         if($stmt){
             return $stmt;
@@ -24,16 +25,19 @@ class User {
         }
         return false;
     }
-    public function update($uid,$data){
+    /**
+     *
+     * @param array $data
+     */
+    public function update(?int $uid,array $data): bool{
         $stmt = $this->pdo->prepare('UPDATE users SET username = :username WHERE id = :id');
         $success = $stmt->execute(['id'=>$uid,'username'=>$data['username']]);
-        if ($success) { return true; }
         if($success){
             return $success;
         }
         return false;
     }
-    public function getById($uid){
+    public function getById(?int $uid): array|false{
         $stmt = $this->pdo->prepare('SELECT * FROM users WHERE id = :id');
         $stmt->execute(['id'=>$uid]);
         if ($stmt) {
@@ -41,12 +45,16 @@ class User {
         }
         return false;
     }
+    /**
+     *
+     * @param array $filters
+     */
     public function getAllUser(int $page = 1, int $perPage = 10, array $filters = []): array {
         $offset = ($page - 1) * $perPage;
         $sql = "SELECT id, username, email, created_at FROM users WHERE 1=1";
         $bindValues = [];
         if(!empty($filters['search'])){
-            $sql .= "AND (username LIKE :search OR email LIKE :search)";
+            $sql .= " AND (username LIKE :search OR email LIKE :search)";
             $bindValues['search'] = '%' . $filters['search'] . '%';
         }
         if (!empty($filters['status'])) {
@@ -65,7 +73,7 @@ class User {
 
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
-    public function login($uname,$upassw){
+    public function login(string $uname,string $upassw): array|false{
         $stmt = $this->pdo->prepare("SELECT id,password_hash FROM users WHERE username = :username");
         $stmt->execute(["username" => $uname]);
         $userRecord = $stmt->fetch();
