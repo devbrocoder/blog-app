@@ -6,7 +6,7 @@ class User {
     public function __construct(PDO $pdo){
         $this->pdo = $pdo;
     }
-    public function create(string $uname,string $upassw): bool{
+    public function create(string $uname,string $upassw): array|false{
         $name = trim($uname);
         $pass = password_hash($upassw,PASSWORD_DEFAULT);
         $stmt = $this->pdo->prepare('INSERT INTO users (username,password_hash,created_at) VALUES (:username, :password_hash, :created_at)');
@@ -29,7 +29,7 @@ class User {
      *
      * @param array $data
      */
-    public function update(?int $uid,array $data): bool{
+    public function update(?int $uid,array $data): array|false{
         $stmt = $this->pdo->prepare('UPDATE users SET username = :username WHERE id = :id');
         $success = $stmt->execute(['id'=>$uid,'username'=>$data['username']]);
         if($success){
