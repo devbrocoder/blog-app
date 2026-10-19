@@ -39,6 +39,10 @@ class Router {
         }
         [$controllerClass, $methodName] = $handler;
         $controller = new $controllerClass($pdo);
-        $controller->$methodName();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->$methodName($_POST);
+        } else {
+            $controller->$methodName();
+        }
     }
 }
