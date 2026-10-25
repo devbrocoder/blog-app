@@ -8,7 +8,7 @@ class Post {
     public function __construct(PDO $pdo){
         $pdo = $this->pdo;
     }
-    public function create(string $title, string $subtitle,?int $category, ?int $thunmbnailid, string $content, string $date, ?int $author): bool{
+    public function create(string $title, string $subtitle,?int $category, ?int $thunmbnailid, string $content,?int $author, string $date): bool{
 
     }
 }
