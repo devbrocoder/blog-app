@@ -13,7 +13,7 @@ if (!in_array($currentPath, $hidef)) {
 } 
 ?>
 
-<script src="http://phptest.ru/assets/js/bootstrap.bundle.min.js"></script>
-<script src="http://phptest.ru/assets/js/script.js"></script>
+<script src="<?php require_once BASE_PATH ?>/assets/js/bootstrap.bundle.min.js"></script>
+<script src="<?php require_once BASE_PATH ?>/assets/js/script.js"></script>
 </body>
 </html>

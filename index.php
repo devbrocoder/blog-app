@@ -3,7 +3,7 @@ declare(strict_types=1);
 require_once "bootstrap.php";
 use App\Core\Router;
 use App\Controllers\AuthController;
-$router = new Router($conn);
+$router = new Router();
 $router->get('/login', [AuthController::class, 'showLoginForm']);
 $router->get('/register', [AuthController::class, 'showRegisterForm']);
 $router->post('/login', [AuthController::class, 'login']);
